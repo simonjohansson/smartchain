@@ -5,6 +5,12 @@ const MUL = 'MUL';
 const DIV = 'DIV';
 const PUSH = 'PUSH';
 
+const LT = 'LT';
+const GT = 'GT';
+const EQ = 'EQ';
+const AND = 'AND';
+const OR = 'OR';
+
 class Interpreter {
   constructor() {
     this.state = {
@@ -12,28 +18,6 @@ class Interpreter {
       stack: [],
       code: []
     };
-  }
-
-  #add(a, b) {
-    return a+b;
-  }
-
-  #sub(a,b) {
-    return a-b;
-  }
-
-  #mul(a,b) {
-    return a*b;
-  }
-
-  #div (a,b) {
-    return a/b;
-  }
-
-  #doMathOp(op) {
-    const a = this.state.stack.pop();
-    const b = this.state.stack.pop();
-    this.state.stack.push(op(a,b));
   }
 
   runCode(code) {
@@ -51,7 +35,30 @@ class Interpreter {
             this.state.stack.push(value);
             break;
           case ADD:
-            this.doMathOp(this.add);
+          case SUB:
+          case MUL:
+          case DIV:
+          case LT:
+          case GT:
+          case EQ:
+          case AND:
+          case OR:
+            const a = this.state.stack.pop();
+            const b = this.state.stack.pop();
+
+            let result;
+
+            if (opCode === ADD) result = a + b;
+            if (opCode === SUB) result = a - b;
+            if (opCode === MUL) result = a * b;
+            if (opCode === DIV) result = a / b;
+            if (opCode == LT) result = a < b ? 1 : 0;
+            if (opCode == GT) result = a > b ? 1 : 0;
+            if (opCode == EQ) result = a === b ? 1 : 0;
+            if (opCode == AND) result = a && b;
+            if (opCode == OR) result = a || b;
+
+            this.state.stack.push(result);
             break;
           case SUB:
             this.doMathOp(this.sub);
@@ -72,3 +79,10 @@ class Interpreter {
     }
   }
 }
+
+console.log("3 < 2", new Interpreter().runCode([PUSH, 2, PUSH, 3, LT, STOP]));
+console.log("3 > 2", new Interpreter().runCode([PUSH, 2, PUSH, 3, GT, STOP]));
+console.log("2 == 2", new Interpreter().runCode([PUSH, 2, PUSH, 2, EQ, STOP]));
+console.log("3 == 2", new Interpreter().runCode([PUSH, 2, PUSH, 3, EQ, STOP]));
+console.log("0 && 1", new Interpreter().runCode([PUSH, 0, PUSH, 1, AND, STOP]));
+console.log("0 || 1", new Interpreter().runCode([PUSH, 0, PUSH, 1, OR, STOP]));
