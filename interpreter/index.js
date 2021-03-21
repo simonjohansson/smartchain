@@ -14,17 +14,25 @@ const OR = 'OR';
 const JUMP = 'JUMP';
 const JUMPI = 'JUMPI';
 
+const EXECUTION_COMPLETE = 'Execution complete';
+const EXECUTION_LIMIT = 10000;
 class Interpreter {
   constructor() {
     this.state = {
       programCounter: 0,
       stack: [],
-      code: []
+      code: [],
+      executionCount: 0,
     };
   }
 
   jump() {
     const dst = this.state.stack.pop();
+
+    if (dst < 0 || dst > this.state.code.length) {
+      throw new Error(`Invalid destination: ${dst}`);
+    }
+
     this.state.programCounter = dst;
     this.state.programCounter--;
   }
@@ -32,14 +40,21 @@ class Interpreter {
   runCode(code) {
     this.state.code = code;
     while (this.state.programCounter < this.state.code.length) {
+      this.state.executionCount++;
+      if (this.state.executionCount > EXECUTION_LIMIT) {
+        throw new Error(`Check for an infinite loop. Execution limit of ${EXECUTION_LIMIT} exceeded`);
+      }
       const opCode = this.state.code[this.state.programCounter];
 
       try {
         switch(opCode) {
           case STOP:
-            throw new Error('Execution is complete')
+            throw new Error(EXECUTION_COMPLETE);
           case PUSH:
             this.state.programCounter++;
+            if (this.state.programCounter === this.state.code.length) {
+              throw new Error('Push instruction cannot be last');
+            }
             const value = this.state.code[this.state.programCounter];
             this.state.stack.push(value);
             break;
@@ -82,7 +97,11 @@ class Interpreter {
             break;
         }
       } catch (error) {
-        return this.state.stack[this.state.stack.length-1];
+        if (error.message === EXECUTION_COMPLETE) {
+          return this.state.stack[this.state.stack.length-1];
+        }
+        
+        throw error;
       }
       this.state.programCounter++;
     }
@@ -98,3 +117,18 @@ console.log("0 || 1", new Interpreter().runCode([PUSH, 0, PUSH, 1, OR, STOP]));
 console.log(new Interpreter().runCode([PUSH, 6, JUMP, PUSH, 0, JUMP, PUSH, 'jump successful', STOP]));
 console.log(new Interpreter().runCode([PUSH, 8, PUSH, 1, JUMPI, PUSH, 0, JUMP, PUSH, 'jumpi successful', STOP]));
 console.log(new Interpreter().runCode([PUSH, 8, PUSH, 0, JUMPI, PUSH, 'jmpi unsuccessuful, but this is what we want', STOP, PUSH, 'jmpi successuful', STOP]));
+try {
+  new Interpreter().runCode([PUSH, 666, JUMP, PUSH, 0, JUMP, PUSH, 'jump successful', STOP]);
+} catch(error) {
+  console.log("We got the expected error,", error.message);
+}
+try {
+  new Interpreter().runCode([PUSH, 0, PUSH]);
+} catch(error) {
+  console.log("We got the expected error,", error.message);
+}
+try {
+  new Interpreter().runCode([PUSH, 0, JUMP]);
+} catch(error) {
+  console.log("We got the expected error,", error.message);
+}
