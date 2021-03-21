@@ -11,6 +11,9 @@ const EQ = 'EQ';
 const AND = 'AND';
 const OR = 'OR';
 
+const JUMP = 'JUMP';
+const JUMPI = 'JUMPI';
+
 class Interpreter {
   constructor() {
     this.state = {
@@ -59,15 +62,6 @@ class Interpreter {
             if (opCode == OR) result = a || b;
 
             this.state.stack.push(result);
-            break;
-          case SUB:
-            this.doMathOp(this.sub);
-            break;
-          case MUL:
-            this.doMathOp(this.mul);
-            break;
-          case DIV:
-            this.doMathOp(this.div);
             break;
           default:
             break;
