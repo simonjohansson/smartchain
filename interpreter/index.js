@@ -14,6 +14,22 @@ const OR = 'OR';
 const JUMP = 'JUMP';
 const JUMPI = 'JUMPI';
 
+const OPCODE_MAP = {
+  STOP,
+  ADD,
+  SUB,
+  MUL,
+  DIV,
+  PUSH,
+  LT,
+  GT,
+  EQ,
+  AND,
+  OR,
+  JUMP,
+  JUMPI
+}
+
 const EXECUTION_COMPLETE = 'Execution complete';
 const EXECUTION_LIMIT = 10000;
 class Interpreter {
@@ -107,28 +123,30 @@ class Interpreter {
     }
   }
 }
+Interpreter.OPCODE_MAP = OPCODE_MAP;
+module.exports = Interpreter;
 
-console.log("3 < 2", new Interpreter().runCode([PUSH, 2, PUSH, 3, LT, STOP]));
-console.log("3 > 2", new Interpreter().runCode([PUSH, 2, PUSH, 3, GT, STOP]));
-console.log("2 == 2", new Interpreter().runCode([PUSH, 2, PUSH, 2, EQ, STOP]));
-console.log("3 == 2", new Interpreter().runCode([PUSH, 2, PUSH, 3, EQ, STOP]));
-console.log("0 && 1", new Interpreter().runCode([PUSH, 0, PUSH, 1, AND, STOP]));
-console.log("0 || 1", new Interpreter().runCode([PUSH, 0, PUSH, 1, OR, STOP]));
-console.log(new Interpreter().runCode([PUSH, 6, JUMP, PUSH, 0, JUMP, PUSH, 'jump successful', STOP]));
-console.log(new Interpreter().runCode([PUSH, 8, PUSH, 1, JUMPI, PUSH, 0, JUMP, PUSH, 'jumpi successful', STOP]));
-console.log(new Interpreter().runCode([PUSH, 8, PUSH, 0, JUMPI, PUSH, 'jmpi unsuccessuful, but this is what we want', STOP, PUSH, 'jmpi successuful', STOP]));
-try {
-  new Interpreter().runCode([PUSH, 666, JUMP, PUSH, 0, JUMP, PUSH, 'jump successful', STOP]);
-} catch(error) {
-  console.log("We got the expected error,", error.message);
-}
-try {
-  new Interpreter().runCode([PUSH, 0, PUSH]);
-} catch(error) {
-  console.log("We got the expected error,", error.message);
-}
-try {
-  new Interpreter().runCode([PUSH, 0, JUMP]);
-} catch(error) {
-  console.log("We got the expected error,", error.message);
-}
+// console.log("3 < 2", new Interpreter().runCode([PUSH, 2, PUSH, 3, LT, STOP]));
+// console.log("3 > 2", new Interpreter().runCode([PUSH, 2, PUSH, 3, GT, STOP]));
+// console.log("2 == 2", new Interpreter().runCode([PUSH, 2, PUSH, 2, EQ, STOP]));
+// console.log("3 == 2", new Interpreter().runCode([PUSH, 2, PUSH, 3, EQ, STOP]));
+// console.log("0 && 1", new Interpreter().runCode([PUSH, 0, PUSH, 1, AND, STOP]));
+// console.log("0 || 1", new Interpreter().runCode([PUSH, 0, PUSH, 1, OR, STOP]));
+// console.log(new Interpreter().runCode([PUSH, 6, JUMP, PUSH, 0, JUMP, PUSH, 'jump successful', STOP]));
+// console.log(new Interpreter().runCode([PUSH, 8, PUSH, 1, JUMPI, PUSH, 0, JUMP, PUSH, 'jumpi successful', STOP]));
+// console.log(new Interpreter().runCode([PUSH, 8, PUSH, 0, JUMPI, PUSH, 'jmpi unsuccessuful, but this is what we want', STOP, PUSH, 'jmpi successuful', STOP]));
+// try {
+//   new Interpreter().runCode([PUSH, 666, JUMP, PUSH, 0, JUMP, PUSH, 'jump successful', STOP]);
+// } catch(error) {
+//   console.log("We got the expected error,", error.message);
+// }
+// try {
+//   new Interpreter().runCode([PUSH, 0, PUSH]);
+// } catch(error) {
+//   console.log("We got the expected error,", error.message);
+// }
+// try {
+//   new Interpreter().runCode([PUSH, 0, JUMP]);
+// } catch(error) {
+//   console.log("We got the expected error,", error.message);
+// }

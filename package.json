@@ -1,0 +1,23 @@
+{
+  "name": "smartchain",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --watchAll"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/simonjohansson/smartchain.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/simonjohansson/smartchain/issues"
+  },
+  "homepage": "https://github.com/simonjohansson/smartchain#readme",
+  "dependencies": {
+    "jest": "^26.6.3"
+  }
+}
