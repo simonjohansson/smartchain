@@ -23,6 +23,12 @@ class Interpreter {
     };
   }
 
+  jump() {
+    const dst = this.state.stack.pop();
+    this.state.programCounter = dst;
+    this.state.programCounter--;
+  }
+
   runCode(code) {
     this.state.code = code;
     while (this.state.programCounter < this.state.code.length) {
@@ -63,6 +69,15 @@ class Interpreter {
 
             this.state.stack.push(result);
             break;
+          case JUMP:
+            this.jump();
+            break;
+          case JUMPI:
+            const condition = this.state.stack.pop();
+            if (condition === 1) {
+              this.jump();
+            }
+            break;
           default:
             break;
         }
@@ -80,3 +95,6 @@ console.log("2 == 2", new Interpreter().runCode([PUSH, 2, PUSH, 2, EQ, STOP]));
 console.log("3 == 2", new Interpreter().runCode([PUSH, 2, PUSH, 3, EQ, STOP]));
 console.log("0 && 1", new Interpreter().runCode([PUSH, 0, PUSH, 1, AND, STOP]));
 console.log("0 || 1", new Interpreter().runCode([PUSH, 0, PUSH, 1, OR, STOP]));
+console.log(new Interpreter().runCode([PUSH, 6, JUMP, PUSH, 0, JUMP, PUSH, 'jump successful', STOP]));
+console.log(new Interpreter().runCode([PUSH, 8, PUSH, 1, JUMPI, PUSH, 0, JUMP, PUSH, 'jumpi successful', STOP]));
+console.log(new Interpreter().runCode([PUSH, 8, PUSH, 0, JUMPI, PUSH, 'jmpi unsuccessuful, but this is what we want', STOP, PUSH, 'jmpi successuful', STOP]));
